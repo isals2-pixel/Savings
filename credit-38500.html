@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#2A1B33">
+<title>Credit 38,500</title>
+<style>
+  :root{
+    --paper:#F1EEF4; --ink:#2A1B33; --ink-2:#5C4A66; --line:#D4CBDA;
+    --paid:#1F6F4A; --paid-bg:#D6EBDF; --debt:#9B3B2B; --debt-bg:#F3DCD6;
+    --card:#FFFFFF; --focus:#6D4B9B;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--paper);color:var(--ink);
+    font:16px/1.45 -apple-system,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-variant-numeric:tabular-nums;-webkit-text-size-adjust:100%}
+  main{max-width:520px;margin:0 auto;padding:16px 16px 48px}
+  h1{font-size:15px;font-weight:600;color:var(--ink-2);margin:6px 0 14px}
+  .hero{background:var(--ink);color:#fff;border-radius:6px;padding:18px}
+  .hero .big{font-size:48px;line-height:1;font-weight:700;letter-spacing:-.02em}
+  .hero .big small{font-size:20px;font-weight:500;opacity:.75}
+  .hero .sub{margin-top:6px;font-size:14px;opacity:.85}
+  .stamps{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:16px}
+  .stamp{aspect-ratio:1;border:1.5px solid rgba(255,255,255,.35);border-radius:4px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;opacity:.7}
+  .stamp b{font-size:14px;font-weight:600}
+  .stamp.paid{background:var(--paid);border-color:var(--paid);opacity:1}
+  .stamp.due{border-style:dashed;opacity:1}
+  .stamp.late{border-color:#E08A78;color:#F7C8BE;opacity:1}
+  .stamp.partial{background:linear-gradient(to top,var(--paid) var(--fill),transparent var(--fill));border-color:var(--paid);opacity:1}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 14px}
+  .card .lbl{font-size:12px;color:var(--ink-2)}
+  .card .val{font-size:22px;font-weight:600;margin-top:2px}
+  .val.paid{color:var(--paid)} .val.debt{color:var(--debt)}
+  .status{margin-top:10px;padding:10px 14px;border-radius:6px;font-size:14px;background:var(--paid-bg);color:var(--paid)}
+  .status.behind{background:var(--debt-bg);color:var(--debt)}
+  section{margin-top:22px}
+  h2{font-size:14px;font-weight:600;margin:0 0 8px}
+  form{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 14px}
+  .fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  input[type=number],input[type=date],input[type=text],input[type=month],textarea{
+    width:100%;font:inherit;font-size:16px;padding:10px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink)}
+  input[type=text]{grid-column:1/-1}
+  .sign{font-size:13px;color:var(--ink-2);margin-top:8px}
+  .seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-top:10px}
+  .seg label{flex:1;text-align:center;padding:10px;font-size:14px;cursor:pointer}
+  .seg input{position:absolute;opacity:0;pointer-events:none}
+  .seg label:has(input:checked){background:var(--paid);color:#fff}
+  .seg label:has(input[value="add"]:checked){background:var(--debt);color:#fff}
+  button{font:inherit;font-size:15px;font-weight:600;padding:12px;border:0;border-radius:6px;
+    background:var(--ink);color:#fff;width:100%;margin-top:10px;cursor:pointer}
+  button.secondary{background:#fff;color:var(--ink);border:1px solid var(--line);font-weight:500}
+  :focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+  table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:6px;overflow:hidden;font-size:14px}
+  td{padding:9px 10px;border-top:1px solid var(--line);vertical-align:top}
+  tr:first-child td{border-top:0}
+  td.amt{text-align:right;white-space:nowrap;font-weight:600}
+  td.amt.neg{color:var(--debt)} td.amt.pos{color:var(--paid)}
+  td.note{color:var(--ink-2);font-size:13px}
+  td.x{width:34px;text-align:center}
+  td.x button{margin:0;padding:4px 8px;background:none;color:var(--ink-2);font-weight:400;font-size:18px;width:auto}
+  .empty{padding:14px;color:var(--ink-2);font-size:14px;background:var(--card);border:1px dashed var(--line);border-radius:6px}
+  details{margin-top:22px}
+  summary{font-size:14px;font-weight:600;cursor:pointer}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+  label{font-size:13px;color:var(--ink-2)}
+  .hint{font-size:13px;color:var(--ink-2);margin-top:8px}
+  textarea{min-height:70px;margin-top:8px}
+  .warn{background:var(--debt-bg);color:var(--debt);padding:10px 14px;border-radius:6px;font-size:14px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<main>
+  <h1 id="title">Credit</h1>
+  <div id="storageWarn" class="warn" hidden>This browser is not saving data between visits. Use Backup below every time.</div>
+
+  <div class="hero">
+    <div class="big"><span id="paidCount">0</span><small> of <span id="totalCount">17</span> weeks</small></div>
+    <div class="sub" id="periodLine"></div>
+    <div class="stamps" id="stamps"></div>
+  </div>
+
+  <div class="row">
+    <div class="card"><div class="lbl">Still owed</div><div class="val debt" id="remaining"></div></div>
+    <div class="card"><div class="lbl">Weeks left</div><div class="val" id="left"></div></div>
+    <div class="card"><div class="lbl">Net cleared</div><div class="val paid" id="net"></div></div>
+    <div class="card"><div class="lbl">Added back</div><div class="val debt" id="added"></div></div>
+  </div>
+  <div class="status" id="status"></div>
+
+  <section>
+    <h2>Record a movement</h2>
+    <form id="f">
+      <div class="fields">
+        <input type="number" id="amount" placeholder="Amount" inputmode="decimal" step="0.01" required>
+        <input type="date" id="date" required>
+        <input type="text" id="note" placeholder="Note (optional)">
+      </div>
+      <div class="seg" role="radiogroup" aria-label="Direction">
+        <label><input type="radio" name="dir" value="sub" checked><span>Subtracting</span></label>
+        <label><input type="radio" name="dir" value="add"><span>Adding</span></label>
+      </div>
+      <div class="sign" id="signHint"></div>
+      <button type="submit" id="submitBtn">Record subtraction</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>History</h2>
+    <div id="history"></div>
+  </section>
+
+  <details>
+    <summary>Backup and restore</summary>
+    <div class="grid2">
+      <button class="secondary" id="exportBtn">Download backup file</button>
+      <button class="secondary" id="importBtn">Restore from file</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </div>
+    <div class="hint">Or copy the text below into Notes. Paste it back and tap Restore from text.</div>
+    <textarea id="blob" spellcheck="false"></textarea>
+    <div class="grid2">
+      <button class="secondary" id="copyBtn">Copy text</button>
+      <button class="secondary" id="pasteBtn">Restore from text</button>
+    </div>
+    <div class="hint" id="lastBackup"></div>
+  </details>
+
+  <details>
+    <summary>Credit terms</summary>
+    <div class="grid2">
+      <label>Amount owed<input type="number" id="cPrincipal" step="1"></label>
+      <label>Number of weeks<input type="number" id="cWeeks" min="1" step="1"></label>
+      <label>First payment date<input type="date" id="cStart"></label>
+      <label>&nbsp;</label>
+    </div>
+    <div class="hint">Payments fall every 7 days from the first payment date.</div>
+    <button class="secondary" id="saveCfg">Save terms</button>
+  </details>
+</main>
+
+<script>
+(function(){
+  const KEY='credit38500.v1';
+  const DEF={principal:38500,weeks:17,start:'2026-09-07',entries:[],lastBackup:null};
+  let S=load(),storageOK=true;
+
+  function load(){
+    try{const raw=localStorage.getItem(KEY);if(raw)return Object.assign({},DEF,JSON.parse(raw))}
+    catch(e){storageOK=false}
+    return JSON.parse(JSON.stringify(DEF));
+  }
+  function save(){
+    try{localStorage.setItem(KEY,JSON.stringify(S));storageOK=true}catch(e){storageOK=false}
+    document.getElementById('storageWarn').hidden=storageOK;render();
+  }
+  try{localStorage.setItem(KEY+'.t','1');localStorage.removeItem(KEY+'.t')}catch(e){storageOK=false}
+  document.getElementById('storageWarn').hidden=storageOK;
+
+  const eur=n=>new Intl.NumberFormat('en-IE',{maximumFractionDigits:0}).format(n);
+  const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const parseD=s=>new Date(s+'T00:00:00');
+  const fmtDate=s=>parseD(s).toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  function compute(){
+    const inst=S.principal/S.weeks;
+    const pos=S.entries.filter(e=>e.amount>0).reduce((a,e)=>a+e.amount,0);
+    const neg=S.entries.filter(e=>e.amount<0).reduce((a,e)=>a-e.amount,0);
+    const net=pos-neg;
+    const remaining=Math.max(0,S.principal-net);
+    const covered=Math.min(S.weeks,Math.max(0,Math.floor(net/inst+1e-9)));
+    const partial=Math.max(0,net/inst-covered);
+    const left=Math.ceil(remaining/inst-1e-9);
+    const s0=parseD(S.start);
+    const dues=[];for(let i=0;i<S.weeks;i++){const d=new Date(s0);d.setDate(s0.getDate()+7*i);dues.push(d)}
+    const today=new Date();today.setHours(0,0,0,0);
+    const expected=dues.filter(d=>d<=today).length;
+    const nextDue=dues.find(d=>d>today)||null;
+    const behind=expected-covered;
+    const toNext=nextDue?Math.max(0,Math.min(S.weeks,expected+1)*inst-net):0;
+    return {inst,net,neg,remaining,covered,partial,left,dues,expected,nextDue,behind,toNext,today};
+  }
+
+  function render(){
+    const c=compute();
+    document.getElementById('title').textContent=`Credit ${eur(S.principal)}`;
+    document.getElementById('paidCount').textContent=c.covered;
+    document.getElementById('totalCount').textContent=S.weeks;
+    const last=c.dues[c.dues.length-1];
+    document.getElementById('periodLine').textContent=
+      `${eur(c.inst)} per week, ${fmtDate(S.start)} to ${last.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`;
+    const st=document.getElementById('stamps');st.innerHTML='';
+    c.dues.forEach((d,i)=>{
+      const el=document.createElement('div');el.className='stamp';
+      if(i<c.covered)el.classList.add('paid');
+      else if(i===c.covered&&c.partial>0){el.classList.add('partial');el.style.setProperty('--fill',Math.round(c.partial*100)+'%')}
+      else if(d<=c.today)el.classList.add('late');
+      else if(c.nextDue&&d.getTime()===c.nextDue.getTime())el.classList.add('due');
+      el.innerHTML=`<b>${i+1}</b>${d.getDate()}/${d.getMonth()+1}`;st.appendChild(el);
+    });
+    document.getElementById('remaining').textContent=eur(c.remaining);
+    document.getElementById('left').textContent=c.left;
+    document.getElementById('net').textContent=eur(c.net);
+    document.getElementById('added').textContent=eur(c.neg);
+    const s=document.getElementById('status');s.className='status';
+    if(c.remaining===0)s.textContent='Cleared in full.';
+    else if(c.behind>0){s.classList.add('behind');
+      s.textContent=`Behind by ${c.behind} week${c.behind>1?'s':''}. `+
+        (c.nextDue?`${eur(c.toNext)} by ${fmtDate(iso(c.nextDue))} to be back on schedule.`:`${eur(c.remaining)} overdue.`)}
+    else{const ahead=c.covered-c.expected;
+      s.textContent=(ahead>0?`Ahead by ${ahead} week${ahead>1?'s':''}. `:'On schedule. ')+
+        (c.nextDue?`Next: ${eur(c.toNext)} by ${fmtDate(iso(c.nextDue))}.`:'')}
+    const h=document.getElementById('history');
+    if(!S.entries.length)h.innerHTML='<div class="empty">No movements yet.</div>';
+    else h.innerHTML='<table>'+[...S.entries].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id).map(e=>
+      `<tr><td>${fmtDate(e.date)}${e.note?`<div class="note">${esc(e.note)}</div>`:''}</td>
+       <td class="amt ${e.amount>0?'pos':'neg'}">${e.amount>0?'+':'-'}${eur(Math.abs(e.amount))}</td>
+       <td class="x"><button data-id="${e.id}" aria-label="Delete">×</button></td></tr>`).join('')+'</table>';
+    document.getElementById('blob').value=JSON.stringify(S);
+    const lb=document.getElementById('lastBackup');
+    lb.textContent=S.lastBackup?`Last backup: ${new Date(S.lastBackup).toLocaleDateString('en-GB')}`:'No backup yet.';
+    if(S.entries.length&&(!S.lastBackup||Date.now()-new Date(S.lastBackup)>7*864e5))lb.textContent+=' Make one.';
+    document.getElementById('cPrincipal').value=S.principal;
+    document.getElementById('cWeeks').value=S.weeks;
+    document.getElementById('cStart').value=S.start;
+  }
+
+  const f=document.getElementById('f');
+  document.getElementById('date').value=iso(new Date());
+  function syncDir(){
+    const sub=f.dir.value==='sub';
+    document.getElementById('submitBtn').textContent=sub?'Record subtraction':'Record addition';
+    document.getElementById('signHint').textContent=sub
+      ?'Subtracting: counts as positive and brings the balance down toward zero.'
+      :'Adding: counts as negative and puts the amount back onto the balance.';
+  }
+  f.addEventListener('change',syncDir);
+  syncDir();
+  f.addEventListener('submit',ev=>{
+    ev.preventDefault();
+    const raw=parseFloat(document.getElementById('amount').value);
+    if(!raw||isNaN(raw))return;
+    const amount=Math.abs(raw)*(f.dir.value==='sub'?1:-1);
+    S.entries.push({id:Date.now(),amount,date:document.getElementById('date').value,note:document.getElementById('note').value.trim()});
+    document.getElementById('amount').value='';document.getElementById('note').value='';
+    save();
+  });
+  document.getElementById('history').addEventListener('click',ev=>{
+    const b=ev.target.closest('button[data-id]');if(!b)return;
+    if(confirm('Delete this movement?')){S.entries=S.entries.filter(e=>String(e.id)!==b.dataset.id);save()}
+  });
+  document.getElementById('exportBtn').onclick=()=>{
+    S.lastBackup=new Date().toISOString();
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,2)],{type:'application/json'}));
+    a.download=`credit-${iso(new Date())}.json`;document.body.appendChild(a);a.click();a.remove();save();
+  };
+  document.getElementById('importBtn').onclick=()=>document.getElementById('importFile').click();
+  document.getElementById('importFile').onchange=ev=>{
+    const file=ev.target.files[0];if(!file)return;
+    file.text().then(restore).catch(()=>alert('Could not read that file.'));ev.target.value='';
+  };
+  document.getElementById('copyBtn').onclick=()=>{
+    const ta=document.getElementById('blob');ta.select();
+    (navigator.clipboard?navigator.clipboard.writeText(ta.value):Promise.resolve(document.execCommand('copy')))
+      .then(()=>{S.lastBackup=new Date().toISOString();save();
+        const b=document.getElementById('copyBtn');b.textContent='Copied';setTimeout(()=>b.textContent='Copy text',1500)});
+  };
+  document.getElementById('pasteBtn').onclick=()=>restore(document.getElementById('blob').value);
+  function restore(t){
+    try{const o=JSON.parse(t);
+      if(!Array.isArray(o.entries)||!o.principal)throw 0;
+      if(!confirm(`Replace current data with ${o.entries.length} movements?`))return;
+      S=Object.assign({},DEF,o);save();
+    }catch(e){alert('That is not a valid backup.')}
+  }
+  document.getElementById('saveCfg').onclick=()=>{
+    const p=+document.getElementById('cPrincipal').value,w=+document.getElementById('cWeeks').value,
+      st=document.getElementById('cStart').value;
+    if(p>0&&w>0&&/^\d{4}-\d{2}-\d{2}$/.test(st)){S.principal=p;S.weeks=w;S.start=st;save()}
+    else alert('Check the terms.');
+  };
+  render();
+})();
+</script>
+</body>
+</html>
